@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 
 
 #[Route('/blog')]
-class BlogController extends AbstractController
+class BlogController extends BaseController
 {
     /**
      * @Route("/{page}", name="blog_list", requirements={"page"="\d+"})
@@ -19,8 +19,10 @@ class BlogController extends AbstractController
         // ...
     }
 
-    #[Route('/{slug}', name: 'blog_show')]
-    public function show($slug) {
+    #[Route('/show/{id}', name: 'blog_show')]
+    public function show($id = 1) {
+        $this->log("info Message from extended BaseController", "warning");
+        dd($id);
         // ...
     }
     
