@@ -6,7 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HtppFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-// use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 #[Route("/")]
 class HomepageController extends AbstractController
@@ -22,5 +23,19 @@ class HomepageController extends AbstractController
     public function backhome() {
         return $this->redirectToRoute('homepage');
     }
-    
+
+    /**
+     * @Route({
+     * "en": "/contact-us",
+     * "nl": "/neem-contact-op"
+     * }, name="contact")
+     */
+    public function contact(Request $request) {
+        $locale = $request->getLocale();
+        $msg = "This page is in English";
+        if($locale == "nl") {
+            $msg = "Deze pagina is in het Nederlands";
+        }
+        return new Response("<html><body>$msg</body></html>");
+    }
 }
