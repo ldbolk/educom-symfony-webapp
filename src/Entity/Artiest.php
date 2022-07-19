@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ArtiestRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ArtiestRepository::class)]
@@ -27,6 +29,18 @@ class Artiest
 
     #[ORM\Column(length: 50)]
     private ?string $website = null;
+
+    #[ORM\OneToMany(mappedBy: 'artiest', targetEntity: Optreden::class)]
+    private Collection $artiestOptredens;
+
+    #[ORM\OneToMany(mappedBy: 'voorprogramma', targetEntity: Optreden::class)]
+    private Collection $artiestVoorprogramma;
+
+    public function __construct()
+    {
+        $this->artiestOptredens = new ArrayCollection();
+        $this->artiestVoorprogramma = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -89,6 +103,66 @@ class Artiest
     public function setWebsite(string $website): self
     {
         $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Optreden>
+     */
+    public function getArtiestOptredens(): Collection
+    {
+        return $this->artiestOptredens;
+    }
+
+    public function addArtiestOptreden(Optreden $artiestOptreden): self
+    {
+        if (!$this->artiestOptredens->contains($artiestOptreden)) {
+            $this->artiestOptredens[] = $artiestOptreden;
+            $artiestOptreden->setArtiest($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArtiestOptreden(Optreden $artiestOptreden): self
+    {
+        if ($this->artiestOptredens->removeElement($artiestOptreden)) {
+            // set the owning side to null (unless already changed)
+            if ($artiestOptreden->getArtiest() === $this) {
+                $artiestOptreden->setArtiest(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Optreden>
+     */
+    public function getArtiestVoorprogramma(): Collection
+    {
+        return $this->artiestVoorprogramma;
+    }
+
+    public function addArtiestVoorprogramma(Optreden $artiestVoorprogramma): self
+    {
+        if (!$this->artiestVoorprogramma->contains($artiestVoorprogramma)) {
+            $this->artiestVoorprogramma[] = $artiestVoorprogramma;
+            $artiestVoorprogramma->setVoorprogramma($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArtiestVoorprogramma(Optreden $artiestVoorprogramma): self
+    {
+        if ($this->artiestVoorprogramma->removeElement($artiestVoorprogramma)) {
+            // set the owning side to null (unless already changed)
+            if ($artiestVoorprogramma->getVoorprogramma() === $this) {
+                $artiestVoorprogramma->setVoorprogramma(null);
+            }
+        }
 
         return $this;
     }

@@ -21,6 +21,24 @@ class ArtiestRepository extends ServiceEntityRepository
         parent::__construct($registry, Artiest::class);
     }
 
+    public function saveArtiest($params) {
+        $artiest = new Artiest();
+        $artiest->setNaam($params["naam"]);
+        $artiest->setGenre($params["genre"]);
+        $artiest->setOmschrijving($params["omschrijving"]);
+        $artiest->setAfbeeldingUrl($params["afbeelding_url"]);
+        $artiest->setWebsite($params["website"]);
+
+        $this->_em->persist($artiest);
+        $this->_em->flush();
+
+        return($artiest);
+    }
+
+    public function fetchArtiest($id) {
+        return ($this->find($id));
+    }
+
     public function add(Artiest $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);

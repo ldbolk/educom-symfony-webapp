@@ -9,6 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
+use App\Entity\Optreden;
+
 #[Route("/")]
 class HomepageController extends AbstractController
 {
@@ -16,7 +18,11 @@ class HomepageController extends AbstractController
     #[Template()]
     public function index()
     {
-        return ['controller_name' => 'HomepageController'];
+        $rep = $this->getDoctrine()->getRepository(Optreden::class);
+        $data = $rep->getAllOptredens();
+
+        dump($data);
+        die();
     }
 
     #[Route("/backhome", name: 'backhome')]
