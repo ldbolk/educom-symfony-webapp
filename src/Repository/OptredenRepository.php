@@ -48,7 +48,12 @@ class OptredenRepository extends ServiceEntityRepository
     }
 
     public function saveOptreden($params) {
-        $optreden = new Optreden();
+
+        if(isset($params["id"]) && $params["id"] != "") {
+            $optreden = $this->find($params["id"]);
+        } else {
+            $optreden = new Optreden();
+        }
 
         $optreden->setPoppodium($this->fetchPoppodium($params["poppodium_id"]));
         $optreden->setArtiest($this->fetchArtiest($params["artiest_id"]));               // ?
@@ -68,6 +73,28 @@ class OptredenRepository extends ServiceEntityRepository
         return($optreden);
     }
 
+    public function deleteOptreden($id) {
+
+        $optreden = $this->find($id);
+        $artiest = $optreden->getArtiest();
+        
+        
+        
+        
+        $optreden = $this->find($id);
+        if($optreden) {
+            $this->_em->remove($optreden);
+            $this->_em->flush();
+            $this->artiestRepository->deleteArtiest($artiest);
+            if($optreden->getVoorprogramma() || $optreden->getVoorprogramma() !== '') {
+                    $voorprogramma = $optreden->getVoorprogramma();
+                    $this->artiestRepository->deleteArtiest($voorprogramma);
+            }
+            return(true);
+        }
+    
+        return(false);
+    }
 
     public function add(Optreden $entity, bool $flush = false): void
     {
