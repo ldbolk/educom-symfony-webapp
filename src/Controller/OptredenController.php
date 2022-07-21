@@ -6,18 +6,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-use App\Entity\Optreden;
-use App\Entity\Artiest;
-use App\Entity\Poppodium;
+use App\Service\OptredenService;
 
 #[Route('/optreden')]
 class OptredenController extends AbstractController
 {
-    #[Route('/', name: 'optreden_save')]
+
+    private $os;
+
+    private function __construct(OptredenService $os) {
+        $this->os = $os;
+    }
+
+    #[Route('/save', name: 'optreden_save')]
     public function saveOptreden()
     {
-        $rep = $this->getDoctrine()->getRepository(Optreden::class);
-
         $optreden = [
             "poppodium_id" => 1,
             "artiest_id" => 1, 
@@ -31,7 +34,15 @@ class OptredenController extends AbstractController
             "afbeelding_url" => "https://melkweg.nl/optreden/plaatje.jpg"
         ];
 
-        $result = $rep->saveOptreden($optreden);
+        $result = $this->os->saveOptreden($optreden);
+        dd($result);
+    }
+
+    #[Route('/delete', name: "optreden_delete")]
+    public function deleteOptreden() {
+        $optreden=2;
+        $rep = $this->getDoctrine()->getRepository(Optreden::class);
+        $result = $rep->deleteOptreden($optreden);
         dd($result);
     }
 }

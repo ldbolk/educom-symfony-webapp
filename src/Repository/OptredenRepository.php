@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Optreden;
+
 use App\Entity\Artiest;
 use App\Entity\Poppodium;
 
@@ -21,32 +22,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class OptredenRepository extends ServiceEntityRepository
 {
-    private $artiestRepository;
-    private $poppodiumRepository;
 
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Optreden::class);
-        $this->artiestRepository = $this->_em->getRepository(Artiest::class);
-        $this->poppodiumRepository = $this->_em->getRepository(Poppodium::class);
     }
     
-
+    
     public function getAllOptredens() {
         $optredens = $this->findAll();
-        return($optredens);
     }
-
-    private function fetchArtiest($id) {
-        $artiest = $this->artiestRepository->fetchArtiest($id);
-        return($artiest);
-    }
-
-    private function fetchPoppodium($id) {
-        $podium = $this->poppodiumRepository->fetchPoppodium($id);
-        return($podium);
-    }
-
+    
     public function saveOptreden($params) {
 
         if(isset($params["id"]) && $params["id"] != "") {
@@ -55,12 +41,12 @@ class OptredenRepository extends ServiceEntityRepository
             $optreden = new Optreden();
         }
 
-        $optreden->setPoppodium($this->fetchPoppodium($params["poppodium_id"]));
-        $optreden->setArtiest($this->fetchArtiest($params["artiest_id"]));               // ?
-
-        if(isset($params["voorprogramma_id"])) {
-            $optreden->setVoorProgramma($this->fetchArtiest($params["voorprogramma_id"]));
-        }
+        // if(isset($params["voorprogramma_id"])) {
+        //     $optreden->setVoorProgramma($this->fetchArtiest($params["voorprogramma_id"]));
+        // }
+        $optreden->setPodium($params["poppodium"]);
+        $optreden->setArtiest($params["artiest"]);
+        $optreden->setVoorprogramma($params["voorprogramma"]);
         $optreden->setOmschrijving($params["omschrijving"]);
         $optreden->setDatum($params["datum"]);
         $optreden->setPrijs($params["prijs"]);
@@ -73,46 +59,23 @@ class OptredenRepository extends ServiceEntityRepository
         return($optreden);
     }
 
-    public function deleteOptreden($id) {
+    // public function add(Optreden $entity, bool $flush = false): void
+    // {
+    //     $this->getEntityManager()->persist($entity);
 
-        $optreden = $this->find($id);
-        $artiest = $optreden->getArtiest();
-        
-        
-        
-        
-        $optreden = $this->find($id);
-        if($optreden) {
-            $this->_em->remove($optreden);
-            $this->_em->flush();
-            $this->artiestRepository->deleteArtiest($artiest);
-            if($optreden->getVoorprogramma() || $optreden->getVoorprogramma() !== '') {
-                    $voorprogramma = $optreden->getVoorprogramma();
-                    $this->artiestRepository->deleteArtiest($voorprogramma);
-            }
-            return(true);
-        }
-    
-        return(false);
-    }
+    //     if ($flush) {
+    //         $this->getEntityManager()->flush();
+    //     }
+    // }
 
-    public function add(Optreden $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
+    // public function remove(Optreden $entity, bool $flush = false): void
+    // {
+    //     $this->getEntityManager()->remove($entity);
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Optreden $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
+    //     if ($flush) {
+    //         $this->getEntityManager()->flush();
+    //     }
+    // }
 
 //    /**
 //     * @return Optreden[] Returns an array of Optreden objects

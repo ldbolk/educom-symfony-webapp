@@ -35,6 +35,19 @@ class ArtiestRepository extends ServiceEntityRepository
         return($artiest);
     }
 
+    public function deleteArtiest($id) {
+        
+        $artiest = $this->find($id);
+        // dd($artiest);
+        if($artiest) {
+            $this->_em->remove($artiest);
+            $this->_em->flush();
+            return(true);
+        }
+    
+        return(false);
+    }
+
     public function fetchArtiest($id) {
         return ($this->find($id));
     }
